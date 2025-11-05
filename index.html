@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Labels</title>
+    <link rel="icon" href="images/logos/icon-16.png">
+    <link rel="stylesheet" href="layout/styles/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-title">
+                <h1>🖨️ Smart Labels</h1>
+            </div>
+        </header>
+
+        <div class="card">
+            <h3>Cargar datos</h3>
+            <div class="controls">
+                <div class="file-input-container">
+                    <input type="file" id="csvFile" accept=".csv, .xlsx">
+                    <label for="csvFile" class="file-label">📁 Selecciona el archivo</label>
+                </div>
+                <button onclick="procesarArchivo()" class="btn-primary">📥 Cargar Archivo</button>
+                <button onclick="window.print()" class="btn-secondary">🖨️ Imprimir Etiquetas</button>
+            </div>
+            <div id="fileInfo" class="file-info"></div>
+        </div>
+
+        <div class="card">
+            <h3>Vista previa</h3>
+            <div id="labelContainer" class="label-container"></div>
+            <div id="emptyState" class="empty-state">
+                <p>👆 Carga un archivo CSV o Excel para generar etiquetas</p>
+                <p>🚨 Recuerda que la cabecera debe contener |nombre|precio|sku|</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="layout/scripts/labels.js"></script>
+</body>
+
+</html>

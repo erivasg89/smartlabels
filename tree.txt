@@ -1,0 +1,227 @@
+Hola chat, me ayudas por favor con mi proyecto, esta es la estructura:
+
+┣ 📂images
+┃ ┗ 📂logos
+┃   ┗ 📜icon-16.png
+┣ 📂layout
+┃ ┣ 📂scripts
+┃ ┃ ┗ 📜labels.js
+┃ ┗ 📂styles
+┃   ┗ 📜style.css
+┗ 📜index.html
+
+html***************************************************************************
+
+index.html:
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Labels</title>
+    <link rel="icon" href="images/logos/icon-16.png">
+    <link rel="stylesheet" href="layout/styles/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+
+<body>
+
+    <h3>🖨️ Smart Labels</h3>
+
+    <div class="controls">
+        <input type="file" id="csvFile" accept=".csv, .xlsx">
+        <button onclick="procesarArchivo()">📥 Cargar Archivo</button>
+        <button onclick="window.print()">🖨️ Imprimir Etiquetas</button>
+    </div>
+
+    <div id="labelContainer"></div>
+
+    <script src="layout/scripts/labels.js"></script>
+</body>
+
+</html>
+
+
+css****************************************************************************
+
+style.css:
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f8f8f8;
+    padding: 20px;
+}
+
+.controls {
+    margin-bottom: 20px;
+}
+
+.label {
+    width: 151px;
+    height: 68px;
+    background: white;
+    border: 1px solid #ccc;
+    display: inline-block;
+    text-align: center;
+    margin: 6px;
+    border-radius: 3px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 2px;
+}
+
+.product-name {
+    font-size: 9px;
+    font-weight: bold;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    line-height: 1.1;
+}
+
+.barcode-container {
+    position: absolute;
+    top: 22px;
+    left: 0;
+    width: 100%;
+    width: 36mm !important;
+    height: 10mm !important;
+}
+
+.price {
+    font-size: 10px;
+    font-weight: bold;
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+    width: 100%;
+}
+
+input,
+button {
+    margin: 5px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background: #ffc107;
+    cursor: pointer;
+    border: none;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #e0a400;
+}
+
+@media print {
+    .controls {
+        display: none;
+    }
+
+    body {
+        background: white;
+        margin: 5mm;
+    }
+
+    /* margen general de impresión */
+    .label {
+        width: 40mm;
+        height: 18mm;
+    }
+}
+
+
+js*****************************************************************************
+
+
+labels.js:
+
+let productos = [];
+
+function procesarArchivo() {
+    const file = document.getElementById("csvFile").files[0];
+    if (!file) return alert("Selecciona un archivo primero (.csv o .xlsx)");
+
+    const extension = file.name.split('.').pop().toLowerCase();
+
+    if (extension === 'csv') {
+        Papa.parse(file, {
+            header: true,
+            skipEmptyLines: true,
+            complete: (result) => {
+                productos = limpiarDatos(result.data);
+                generarEtiquetas();
+            }
+        });
+    } else if (extension === 'xlsx') {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const json = XLSX.utils.sheet_to_json(sheet);
+            productos = limpiarDatos(json);
+            generarEtiquetas();
+        };
+        reader.readAsArrayBuffer(file);
+    } else {
+        alert("Formato no compatible. Usa .csv o .xlsx");
+    }
+}
+
+function limpiarDatos(data) {
+    return data.map(item => {
+        const nombre = (item.nombre || item.Nombre || "").trim();
+        const precioTexto = (item.precio || item.Precio || "").toString().trim();
+        const precio = parseFloat(precioTexto.replace(/[^\d.]/g, "")) || 0;
+        const sku = (item.sku || item.SKU || "").toString().trim();
+        return { nombre, precio, sku };
+    }).filter(p => p.nombre && p.sku);
+}
+
+function generarEtiquetas() {
+    const container = document.getElementById("labelContainer");
+    container.innerHTML = "";
+
+    productos.forEach((p, i) => {
+        const div = document.createElement("div");
+        div.classList.add("label");
+
+        div.innerHTML = `
+        <div class="product-name">${p.nombre}</div>
+        <div class="barcode-container">
+        <svg id="barcode${i}"></svg>
+        </div>
+        <div class="price">$${p.precio.toFixed(2)}</div>
+    `;
+
+        container.appendChild(div);
+
+        try {
+            JsBarcode(`#barcode${i}`, p.sku, {
+                format: "CODE128",
+                width: 0.7,   // grosor de barra
+                height: 25,
+                displayValue: false,
+                margin: 0
+            });
+        } catch (err) {
+            console.warn("Error generando código de barras:", p.sku);
+        }
+    });
+}
+
+
+*******************************************************************************
+
+Ayúdame por favor mejorando el diseño tanto de la página cómo de las etiquetas, el código de barras a la hora de mandar la 
+impresión pareciera como si este se ajustara y se hiciera más ancho por lo que pierde duncionalidad y se ve mal,
+trata de hacer que las etiquetas se vean un poco más como estas que te comparto por favor.
