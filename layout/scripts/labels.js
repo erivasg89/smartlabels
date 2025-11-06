@@ -48,12 +48,41 @@ function procesarArchivo() {
 
 function limpiarDatos(data) {
     return data.map(item => {
-        // Buscar campos con nombres diferentes
-        const nombre = (item.nombre || item.Nombre || item.Producto || item.producto || item.descripcion || item.Descripcion || "").toString().trim();
-        const precioTexto = (item.precio || item.Precio || item.price || item.Price || "").toString().trim();
+        const buscarValor = (posiblesNombres) => {
+            for (let nombre of posiblesNombres) {
+                if (item[nombre] !== undefined) return item[nombre];
+                
+                const claveEncontrada = Object.keys(item).find(key => 
+                    key.toLowerCase() === nombre.toLowerCase()
+                );
+                if (claveEncontrada) return item[claveEncontrada];
+            }
+            return "";
+        };
+
+        // Buscar nombre con múltiples opciones
+        const nombre = buscarValor([
+            'nombre', 'Nombre', 'NOMBRE', 'producto', 'Producto', 'PRODUCTO',
+            'descripcion', 'Descripcion', 'DESCRIPCION', 'description', 'Description', 'DESCRIPTION',
+            'item', 'Item', 'ITEM', 'articulo', 'Articulo', 'ARTICULO'
+        ]).toString().trim();
+
+        // Buscar precio con múltiples opciones
+        const precioTexto = buscarValor([
+            'precio', 'Precio', 'PRECIO', 'price', 'Price', 'PRICE',
+            'costo', 'Costo', 'COSTO', 'cost', 'Cost', 'COST',
+            'valor', 'Valor', 'VALOR'
+        ]).toString().trim();
+
         const precio = parseFloat(precioTexto.replace(/[^\d.]/g, "")) || 0;
-        const sku = (item.sku || item.SKU || item.codigo || item.Codigo || item.code || "").toString().trim();
-        
+
+        // Buscar SKU con múltiples opciones
+        const sku = buscarValor([
+            'sku', 'Sku', 'SKU', 'codigo', 'Codigo', 'CODIGO',
+            'code', 'Code', 'CODE', 'id', 'Id', 'ID',
+            'referencia', 'Referencia', 'REFERENCIA', 'modelo', 'Modelo', 'MODELO'
+        ]).toString().trim();
+
         return { nombre, precio, sku };
     }).filter(p => p.nombre && p.sku);
 }
@@ -86,11 +115,11 @@ function generarEtiquetas() {
 
         container.appendChild(div);
 
-        // Generar código de barras
+        // Generar código de barras con configuración mejorada
         try {
             JsBarcode(`#barcode${i}`, p.sku, {
                 format: "CODE128",
-                width: 1,
+                width: 1, 
                 height: 25,
                 displayValue: false,
                 margin: 0,
