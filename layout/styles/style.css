@@ -37,13 +37,12 @@ button{padding:8px 16px;border-radius:6px;border:none;font-weight:bold;cursor:po
 .barcode-container {position:absolute;top:22px;left:0;width:100%;height:25px;display:flex;justify-content:center;align-items:center;}
 .barcode-container svg {max-width:100%;height:100%;}
 .price {font-size:10px;font-weight:bold;position:absolute;bottom:3px;right:5px;text-align:right;}
-.sku {font-size:8px;font-weight:bold;position:absolute;bottom:3px;left:5px;color:#333;}
+.sku {font-size:8px;position:absolute;bottom:3px;left:5px;color:#333;font-weight: bold;}
 
 
 /* ================================================================ */
 /* Estilos para impresión */
 /* ================================================================ */
 
-@media print {body * {visibility:hidden;margin:0 !important;padding:0 !important;} .label-container,.label-container *,.label,.label * {visibility:visible;} .label-container {position:absolute;top:0;left:0;width:100%;display:flex !important;flex-wrap:wrap;gap:2mm;margin:0 !important;padding:5mm !important;box-shadow:none;border:none;} body {background:white;margin:0 !important;padding:0 !important;width:100%;visibility:visible;} .label {width:40mm !important;height:18mm !important;border:0.5px solid #000;margin:0 !important;page-break-inside:avoid;break-inside:avoid;} .product-name {font-size:7px;top:1mm;left:1mm;right:1mm;} .barcode-container {top:6mm;height:6mm;} .price {font-size:8px;bottom:1mm;right:2mm;} .sku {font-size:6px;bottom:1mm;left:2mm;} .barcode-container svg {width:auto !important;height:100% !important;max-width:100% !important;transform:none !important;}} 
+@media print {body * {visibility:hidden;margin:0 !important;padding:0 !important;} .label-container,.label-container *,.label,.label * {visibility:visible;} .label-container {position:absolute;top:0;left:0;width:100%;display:flex !important;flex-wrap:wrap;gap:2mm;margin:0 !important;padding:5mm !important;box-shadow:none;border:none;} body {background:white;margin:0 !important;padding:0 !important;width:100%;visibility:visible;} .label {width:40mm !important;height:18mm !important;border:0.5px solid #000;margin:0 !important;page-break-inside:avoid;break-inside:avoid;} .product-name {font-size:8px;top:1mm;left:1mm;right:1mm;} .barcode-container {top:6mm;height:6mm;} .price {font-size:10px;bottom:1mm;right:2mm;} .sku {font-size:6px;bottom:1mm;left:2mm;} .barcode-container svg {width:auto !important;height:100% !important;max-width:100% !important;transform:none !important;}} 
 @media (max-width:768px) {.controls {flex-direction:column;align-items:stretch;} .file-input-container,button {width:100%;} .label-container {justify-content:center;}}
-
