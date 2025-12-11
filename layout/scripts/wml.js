@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function validateIP() {
-        const allowedIPs = ["187.234.222.84","201.149.57.154","187.251.246.220"];
+        const allowedIPs = ["187.234.222.84","201.149.57.154","187.251.246.220,"189.147.236.248""];
         const userIP = await getIP();
 
         console.log("IP detectada: ", userIP);
@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     validateIP();
 });
+
 
 
 
